@@ -1,0 +1,55 @@
+{
+  "name": "en-courage_articles",
+  "version": "1.0.0",
+  "description": "Full Stack Article CRUD application",
+  "main": "./bin/www",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "node ./bin/www & go run ./backend/src/api/app.go",
+    "web": "webpack",
+    "seed": "go run backend/src/api/seed.go"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eliaahadi/en-courage_articles.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eliaahadi/en-courage_articles/issues"
+  },
+  "homepage": "https://github.com/eliaahadi/en-courage_articles#readme",
+  "devDependencies": {
+    "babel-preset-env": "^1.7.0",
+    "nodemon": "^1.19.1",
+    "redux-logger": "^3.0.6",
+    "webpack": "^3.11.0"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-1": "^6.24.1",
+    "body-parser": "~1.18.2",
+    "connect-mongo": "^2.0.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "ejs": "^2.5.7",
+    "express": "^4.17.1",
+    "express-session": "^1.15.6",
+    "http-proxy": "^1.17.0",
+    "jade": "~1.11.0",
+    "mongoose": "^5.0.5",
+    "morgan": "~1.9.0",
+    "react": "15.4.1",
+    "react-bootstrap": "^0.32.1",
+    "react-dom": "15.4.1",
+    "react-redux": "5.0.5",
+    "react-router": "2.8.1",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0",
+    "serve-favicon": "~2.4.5"
+  }
+}
