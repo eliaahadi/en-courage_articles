@@ -22,7 +22,7 @@ export function articlesReducers(state={
       break;
     }
     case "RESET_UPDATE_BUTTON": {
-      return {...state, msg:null, style:'primary', validation:null}
+      return {...state, updatemsg:null, style:'primary', validation:null}
       break;
     }
     case "DELETE_ARTICLE": {

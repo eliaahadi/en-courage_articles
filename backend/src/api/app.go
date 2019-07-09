@@ -28,61 +28,6 @@ type article struct {
 	Youtube string `json: "youtube"`
 }
 
-func (p *article) getArticle(db *sql.DB) error {
-	return db.QueryRow("SELECT title, content, author, image, youtube FROM articles WHERE id=$1",
-		p.ID).Scan(&p.Title, &p.Content, &p.Author, &p.Image, &p.Youtube)
-}
-
-func (p *article) updateArticle(db *sql.DB) error {
-	_, err :=
-		db.Exec("UPDATE articles SET title=$1, content=$2, author=$3, image=$4, youtube=$5 WHERE id=$6",
-			p.Title, p.Content, p.Author, p.Image, p.Youtube, p.ID)
-
-	return err
-}
-
-func (p *article) deleteArticle(db *sql.DB) error {
-	_, err := db.Exec("DELETE FROM articles WHERE id=$1", p.ID)
-
-	return err
-}
-
-func (p *article) createArticle(db *sql.DB) error {
-	err := db.QueryRow(
-		"INSERT INTO articles(title, content, author, image, youtube) VALUES($1, $2, $3, $4, $5) RETURNING id",
-		p.Title, p.Content, p.Author, p.Image, p.Youtube).Scan(&p.ID)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func getArticles(db *sql.DB, start, count int) ([]article, error) {
-	rows, err := db.Query(
-		"SELECT id, title, content, author, image, youtube FROM articles LIMIT $1 OFFSET $2",
-		count, start)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer rows.Close()
-
-	articles := []article{}
-
-	for rows.Next() {
-		var p article
-		if err := rows.Scan(&p.ID, &p.Title, &p.Content, &p.Author, &p.Image, &p.Youtube); err != nil {
-			return nil, err
-		}
-		articles = append(articles, p)
-	}
-
-	return articles, nil
-}
-
 func main() {
 	a := App{}
 	a.Initialize(
@@ -96,9 +41,6 @@ func main() {
 
 func (a *App) Initialize(user, dbname, sslmode string) {
 	var err error
-	// connectionString :=
-	// 	fmt.Sprintf("user=%s password=%s dbname=%s sslmode=%s", user, password, dbname, sslmode)
-	// a.DB, err = sql.Open("postgres", connectionString)
 
 	a.DB, err = sql.Open("postgres", "user=eliaahadi dbname=encourage sslmode=disable")
 	if err != nil {
@@ -119,6 +61,56 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/articles/{id:[0-9]+}", a.updateArticle).Methods("PUT")
 	a.Router.HandleFunc("/articles/{id:[0-9]+}", a.deleteArticle).Methods("DELETE")
 }
+
+//SQL methods
+func getArticles(db *sql.DB, start, count int) ([]article, error) {
+	rows, err := db.Query(
+		"SELECT id, title, content, author, image, youtube FROM articles LIMIT $1 OFFSET $2",
+		count, start)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	articles := []article{}
+
+	for rows.Next() {
+		var p article
+		if err := rows.Scan(&p.ID, &p.Title, &p.Content, &p.Author, &p.Image, &p.Youtube); err != nil {
+			return nil, err
+		}
+		articles = append(articles, p)
+	}
+	return articles, nil
+}
+
+func (p *article) getArticle(db *sql.DB) error {
+	return db.QueryRow("SELECT title, content, author, image, youtube FROM articles WHERE id=$1",
+		p.ID).Scan(&p.Title, &p.Content, &p.Author, &p.Image, &p.Youtube)
+}
+
+func (p *article) updateArticle(db *sql.DB) error {
+	_, err :=
+		db.Exec("UPDATE articles SET title=$1, content=$2, author=$3, image=$4, youtube=$5 WHERE id=$6",
+			p.Title, p.Content, p.Author, p.Image, p.Youtube, p.ID)
+	return err
+}
+
+func (p *article) deleteArticle(db *sql.DB) error {
+	_, err := db.Exec("DELETE FROM articles WHERE id=$1", p.ID)
+	return err
+}
+
+func (p *article) createArticle(db *sql.DB) error {
+	err := db.QueryRow(
+		"INSERT INTO articles(title, content, author, image, youtube) VALUES($1, $2, $3, $4, $5) RETURNING id",
+		p.Title, p.Content, p.Author, p.Image, p.Youtube).Scan(&p.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+//SQL responses
 func (a *App) getArticles(w http.ResponseWriter, r *http.Request) {
 	count, _ := strconv.Atoi(r.FormValue("count"))
 	start, _ := strconv.Atoi(r.FormValue("start"))
@@ -203,6 +195,8 @@ func (a *App) deleteArticle(w http.ResponseWriter, r *http.Request) {
 	}
 	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
+
+//JSON response format
 func respondWithError(w http.ResponseWriter, code int, message string) {
 	respondWithJSON(w, code, map[string]string{"error": message})
 }
