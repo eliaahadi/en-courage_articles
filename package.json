@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "node ./bin/www & go run ./backend/src/api/app.go",
     "web": "webpack",
-    "seed": "go run backend/src/api/seed.go"
+    "seed": "go run backend/src/api/seed.go",
+    "start": "node ./bin/www & go run ./backend/src/api/app.go & webpack"
   },
   "repository": {
     "type": "git",
